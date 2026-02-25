@@ -37,11 +37,8 @@ C:\AutopilotAssistant
 
 ## 🖥 Screenshot
 
-```
+![Screenshot](Screenshot.png)
 
-(Add Screenshot.png here if publishing on GitHub)
-
-````
 
 ---
 
