@@ -36,7 +36,7 @@ Add-Type -AssemblyName System.Windows.Forms | Out-Null
 #endregion ============================== BOOTSTRAPPING / .NET ========================================
 
 #region ============================== CONSTANTS / BRANDING / APP PATHS ==============================
-$AppVersion  = '1.4'
+$AppVersion  = '2.0'
 
 
 # Delegated scopes for interactive Graph auth (sufficient for Autopilot R/W)
@@ -2390,6 +2390,7 @@ try {
   }
 } catch { }
 #endregion ============================== RUN THE UI ==================================================
+
 
 
 
