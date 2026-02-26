@@ -25,7 +25,7 @@
 
 .NOTES
     Script  : Autopilot Assistant.ps1
-    Path    : test autopilot\Autopilot Importer\Autopilot Importer copy.ps1
+    
     Updated : 2026-02-24
 #>
 
@@ -2389,4 +2389,5 @@ try {
   }
 } catch { }
 #endregion ============================== RUN THE UI ==================================================
+
 
