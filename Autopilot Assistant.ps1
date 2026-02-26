@@ -24,9 +24,10 @@
     .\Autopilot Assistant.ps1
 
 .NOTES
-    Script  : Autopilot Assistant.ps1
-    
-    Updated : 2026-02-24
+    Author  : Mohammad Abdelkader
+    Website : momar.tech
+    Date    : 2026-02-25
+    Version : 2.0
 #>
 
 #region ============================== BOOTSTRAPPING / .NET ==========================================
@@ -2389,5 +2390,6 @@ try {
   }
 } catch { }
 #endregion ============================== RUN THE UI ==================================================
+
 
 
