@@ -250,6 +250,21 @@ No data stored outside this root path.
 
 ---
 
+## 📜 License
+
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+
+---
+
+## 👤 Author
+
+* **Mohammad Abdelkader**
+* Website: **momar.tech**
+* Version: **2.0**
+* Date: **2026-02-25**
+
+---
+
 ## ⚠ Disclaimer
 
 This tool is provided **as-is**.
@@ -258,9 +273,5 @@ This tool is provided **as-is**.
 * Ensure correct Graph permissions
 * Validate organizational compliance before deployment
 
----
 
-## 📜 License
-
-This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
 
