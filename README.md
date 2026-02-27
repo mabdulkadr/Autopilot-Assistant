@@ -265,6 +265,13 @@ This project is licensed under the [MIT License](https://opensource.org/licenses
 
 ---
 
+## ☕ Donate
+
+If you find this project helpful, consider supporting it by  
+[buying me a coffee](https://www.buymeacoffee.com/mabdulkadrx).
+
+---
+
 ## ⚠ Disclaimer
 
 This tool is provided **as-is**.
@@ -272,6 +279,7 @@ This tool is provided **as-is**.
 * Test in staging before production
 * Ensure correct Graph permissions
 * Validate organizational compliance before deployment
+
 
 
 
