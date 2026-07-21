@@ -2189,7 +2189,6 @@ if ($FooterLink) {
 
 #region ======================== WIRE UP UI EVENTS =============================
 $Window.Add_Loaded({
-  Refresh-DeviceInfo
   Refresh-SessionInfo
   Update-MainGraphUI
   $TxtSaveFolder.Text = $Paths.HwId
@@ -2203,6 +2202,14 @@ $Window.Add_Loaded({
   if (-not $BtnGraphConnect -or -not $BtnGraphDisconnect) {
     Add-Log "Graph buttons were not initialized from XAML (BtnGraphConnect/BtnGraphDisconnect)." "ERROR"
   }
+
+  $script:DeferredInfoTimer = New-Object Windows.Threading.DispatcherTimer
+  $script:DeferredInfoTimer.Interval = [TimeSpan]::FromMilliseconds(100)
+  $script:DeferredInfoTimer.Add_Tick({
+    $script:DeferredInfoTimer.Stop()
+    try { Refresh-DeviceInfo } catch { }
+  })
+  $script:DeferredInfoTimer.Start()
 })
 
 $Window.Add_Closing({
