@@ -17,25 +17,26 @@
     - Exit 0: Completed successfully
     - Exit 1: Failed or requires further action
 
-.RUN AS
-    User or System (based on assignment model and script dependencies).
-
 .EXAMPLE
     .\Autopilot Assistant.ps1
 
 .NOTES
-    Author  : Mohammad Abdelkader
-    Website : momar.tech
-    Date    : 2026-02-10
-    Version : 2.0
+    Author      : Mohammad Abdelkader Omar
+    Website     : https://momar.tech
+    LinkedIn    : https://www.linkedin.com/in/mabdulkadr/
+    Date        : 2026-02-10
+    Version     : 2.0
+    Changelog   :
+                 2.0 - Full WPF rebuild with Graph API integration and retry support.
+                 1.0 - Initial release.
 #>
 
-#region ============================== BOOTSTRAPPING / .NET ==========================================
+#region ======================== BOOTSTRAPPING / .NET ============================
 Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase | Out-Null
 Add-Type -AssemblyName System.Windows.Forms | Out-Null
-#endregion ============================== BOOTSTRAPPING / .NET ========================================
+#endregion ======================== BOOTSTRAPPING / .NET ==========================
 
-#region ============================== CONSTANTS / BRANDING / APP PATHS ==============================
+#region ======================== CONSTANTS / BRANDING / APP PATHS ========================
 $AppVersion  = '2.0'
 
 
@@ -61,9 +62,9 @@ $Paths.GetEnumerator() | ForEach-Object {
 
 # Per-day log file
 $LogFile = Join-Path $Paths.Logs ("app_{0}.log" -f (Get-Date -Format 'yyyyMMdd'))
-#endregion ============================== CONSTANTS / BRANDING / APP PATHS ============================
+#endregion ======================== CONSTANTS / BRANDING / APP PATHS ======================
 
-#region ============================== UTILITY HELPERS (UI + LOGGING) ================================
+#region ======================== UTILITY HELPERS (UI + LOGGING) ========================
 function New-Brush([string]$color) {
   $fallback = [Windows.Media.Brushes]::Black
   if ([string]::IsNullOrWhiteSpace($color)) { return $fallback }
@@ -130,6 +131,7 @@ function Add-Log([string]$text, [string]$level = 'INFO') {
   } catch { }
 }
 
+# Displays a WPF popup informing the user that a device serial already exists in Autopilot.
 function Show-UploadBlockedDeviceExists {
   param(
     [string[]]$Serials,
@@ -228,6 +230,7 @@ function Show-UploadBlockedDeviceExists {
   }
 }
 
+# Activates and shows the indeterminate-style upload progress bar in the UI.
 function Start-UploadProgress {
   if ($ProgressBar) {
     $script:UploadProgressActive = $true
@@ -238,6 +241,7 @@ function Start-UploadProgress {
   }
 }
 
+# Increments the progress bar value by 1.5 each tick, wrapping to create an animated indeterminate effect.
 function Step-UploadProgress {
   if ($ProgressBar -and $script:UploadProgressActive) {
     $next = [double]$ProgressBar.Value + 1.5
@@ -246,6 +250,7 @@ function Step-UploadProgress {
   }
 }
 
+# Resets the progress bar to zero, hides it, and marks the upload-progress flag as inactive.
 function Stop-UploadProgress {
   $script:UploadProgressActive = $false
   if ($ProgressBar) {
@@ -254,6 +259,7 @@ function Stop-UploadProgress {
   }
 }
 
+# Generic module bootstrapper that imports a named module, optionally installing from PSGallery if missing.
 function Ensure-RequiredModule {
   param(
     [Parameter(Mandatory)][string]$ModuleName,
@@ -427,9 +433,9 @@ function Disconnect-GraphDirect {
   }
 }
 
-#endregion ============================== UTILITY HELPERS (UI + LOGGING) ==============================
+#endregion ======================== UTILITY HELPERS (UI + LOGGING) ========================
 
-#region ============================== DEVICE / ENVIRONMENT CHECKS ===================================
+#region ======================== DEVICE / ENVIRONMENT CHECKS =====================
 function Test-Internet {
   try {
     $tcp = New-Object System.Net.Sockets.TcpClient
@@ -582,6 +588,7 @@ function Run-PreChecks {
   return $ok
 }
 
+# Extracts the serial number string from a device record by checking serialNumber or Device Serial Number properties.
 function Get-SerialFromRecord {
   param($Record)
   if (-not $Record) { return $null }
@@ -592,6 +599,7 @@ function Get-SerialFromRecord {
   return $s.Trim()
 }
 
+# Parses serial numbers from a CSV/JSON file or fallback string, deduplicates, and returns the unique list.
 function Get-UploadSerialCandidates {
   param(
     [string]$Path,
@@ -633,6 +641,7 @@ function Get-UploadSerialCandidates {
   return @($out)
 }
 
+# Queries Microsoft Graph to check whether a serial number already exists in Autopilot device identities.
 function Test-AutopilotSerialExists {
   param([Parameter(Mandatory)][string]$Serial)
 
@@ -907,9 +916,9 @@ function Show-EnrollResultsWindow {
     Add-Log ("Results window error: " + $detail) "ERROR"
   }
 }
-#endregion ============================== DEVICE / ENVIRONMENT CHECKS =================================
+#endregion ======================== DEVICE / ENVIRONMENT CHECKS ===================
 
-#region ============================== GRAPH STATE + UI SYNC =========================================
+#region ======================== GRAPH STATE + UI SYNC ===========================
 $script:GraphConnected = $false
 $script:GraphAccount   = $null
 $script:GraphTenantId  = $null
@@ -973,9 +982,9 @@ function Update-MainGraphUI {
     }
   }
 }
-#endregion ============================== GRAPH STATE + UI SYNC =======================================
+#endregion ======================== GRAPH STATE + UI SYNC =========================
 
-#region ============================== BACKGROUND PIPELINE (RUNSPACE + TIMER) ========================
+#region ======================== BACKGROUND PIPELINE (RUNSPACE + TIMER) =========
 $iss  = [System.Management.Automation.Runspaces.InitialSessionState]::CreateDefault()
 $pool = [System.Management.Automation.Runspaces.RunspaceFactory]::CreateRunspacePool(1, 1, $iss, $Host)
 $pool.ApartmentState = [System.Threading.ApartmentState]::STA
@@ -988,6 +997,7 @@ $script:LastFailedRecords = @()
 $script:UploadProgressActive = $false
 $script:AppCleanupDone = $false
 
+# One-shot cleanup: stops timers, disposes runspace, disconnects Graph, clears tokens, triggers GC.
 function Invoke-AppCleanup {
   if ($script:AppCleanupDone) { return }
   $script:AppCleanupDone = $true
@@ -1134,9 +1144,9 @@ $Timer.Add_Tick({
     $Timer.Stop()
   }
 })
-#endregion ============================== BACKGROUND PIPELINE (RUNSPACE + TIMER) ======================
+#endregion ======================== BACKGROUND PIPELINE (RUNSPACE + TIMER) =======
 
-#region ============================== WORKER SCRIPTS ================================================
+#region ======================== WORKER SCRIPTS ================================
 # 0) Graph token worker (cache-first, interactive fallback)
 $GraphTokenWorker = @'
 param($Scopes)
@@ -1597,9 +1607,9 @@ try{
   } | ConvertTo-Json -Depth 8 -Compress
 }
 '@
-#endregion ============================== WORKER SCRIPTS ==============================================
+#endregion ======================== WORKER SCRIPTS ==============================
 
-#region ============================== MAIN WINDOW UI ================================================
+#region ======================== MAIN WINDOW UI ================================
 $Xaml = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -2175,9 +2185,9 @@ if ($FooterLink) {
   })
 }
 
-#endregion ============================== MAIN WINDOW UI ==============================================
+#endregion ======================== MAIN WINDOW UI ==============================
 
-#region ============================== WIRE UP UI EVENTS =============================================
+#region ======================== WIRE UP UI EVENTS =============================
 $Window.Add_Loaded({
   Refresh-DeviceInfo
   Refresh-SessionInfo
@@ -2379,9 +2389,9 @@ if ($BtnGraphDisconnect) {
   })
 }
 
-#endregion ============================== WIRE UP UI EVENTS ===========================================
+#endregion ======================== WIRE UP UI EVENTS ===========================
 
-#region ============================== RUN THE UI ====================================================
+#region ======================== RUN THE UI ====================================
 [void]$Window.ShowDialog()
 Invoke-AppCleanup
 try {
@@ -2389,7 +2399,7 @@ try {
     [System.Environment]::Exit(0)
   }
 } catch { }
-#endregion ============================== RUN THE UI ==================================================
+#endregion ======================== RUN THE UI ==================================
 
 
 
