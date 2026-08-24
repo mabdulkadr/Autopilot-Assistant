@@ -1,55 +1,56 @@
+<div align="center">
 
 # 🚀 Autopilot Assistant
 
+**Windows Autopilot onboarding, simplified**
+
+Collect hardware hashes, import devices into Intune Autopilot, and monitor every upload — from one clean WPF interface.
+
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![PowerShell](https://img.shields.io/badge/PowerShell-5.1%2B-blue.svg)
-![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
-![GUI](https://img.shields.io/badge/GUI-WPF-purple.svg)
+![PowerShell](https://img.shields.io/badge/powershell-5.1%2B-blue.svg)
+![Platform](https://img.shields.io/badge/Windows-10%2F11-blue.svg)
+![UI](https://img.shields.io/badge/UI-WPF%20GUI-blue.svg)
+![Intune](https://img.shields.io/badge/Intune-Autopilot-0078D4.svg)
 ![Version](https://img.shields.io/badge/version-2.0-green.svg)
 
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-☕-FFDD00?style=for-the-badge)](https://www.buymeacoffee.com/mabdulkadrx)
+[Features](#-core-features) • [Usage](#-usage) • [Requirements](#️-requirements) • [Troubleshooting](#-troubleshooting)
+
+</div>
 
 ---
 
-## 📖 Overview
+# 📖 Overview
 
-**Autopilot Assistant** is a modern WPF-based PowerShell tool designed to simplify **Windows Autopilot onboarding** and device provisioning workflows.
+**Autopilot Assistant** is a modern WPF-based PowerShell tool designed to simplify **Windows Autopilot onboarding** and device provisioning workflows. It provides a structured, production-ready interface for:
 
-It provides a structured, production-ready interface for:
-
-- Collecting **Hardware Hash (HWID)**
-- Connecting securely to **Microsoft Graph (Interactive delegated auth)**
-- Importing devices into **Intune Autopilot**
-- Preventing duplicate uploads automatically
-- Monitoring upload status with structured results
-- Logging all operations locally
+* Collecting the **Hardware Hash (HWID)**
+* Connecting securely to **Microsoft Graph** (interactive delegated auth)
+* Importing devices into **Intune Autopilot**
+* Preventing duplicate uploads automatically
+* Monitoring upload status with structured results
+* Logging all operations locally
 
 ---
 
-## 🖥 Screenshot
+## 🖼️ Screenshots
 
-![Screenshot](Screenshot.png)
+![Autopilot Assistant main window — device information panel, upload methods, and Message Center](Screenshot.png)
+
+*Main window: live device information panel, the two collection/upload methods, and the real-time Message Center.*
 
 ---
 
-## ✨ Core Features
+# ✨ Core Features
 
 ### 🔹 Device Information Panel
-- Device Model
-- Device Name
-- Manufacturer
-- Serial Number
-- Free Storage (GB)
-- TPM Version
-- Internet Connectivity Status
-- Session details (Machine / User / Elevation)
+* Device model, name, manufacturer, serial number
+* Free storage (GB) and TPM version
+* Internet connectivity status
+* Session details (machine / user / elevation)
 
 ### 🔹 Method 1 — Collect HWID (No Upload)
-- Exports compliant Autopilot CSV
-- Does not require Graph connection
-- Ideal for offline preparation
-
-Output format:
+* Exports a compliant Autopilot CSV
+* Does **not** require a Graph connection — ideal for offline preparation
 
 ```csv
 Device Serial Number,Windows Product ID,Hardware Hash
@@ -57,109 +58,66 @@ Device Serial Number,Windows Product ID,Hardware Hash
 ```
 
 ### 🔹 Method 2 — Upload to Intune Autopilot
-- Connect to Microsoft Graph (browser interactive)
-- Upload: CSV, JSON, or auto-generate single-device CSV
-- Optional: Group Tag, Assigned User (UPN), Assigned Computer Name
-- Built-in duplicate detection by serial number
-- Automatic status polling (Complete / Queued / Failed)
+* Connect to Microsoft Graph (browser interactive)
+* Upload from CSV, JSON, or auto-generate a single-device CSV
+* Optional: Group Tag, Assigned User (UPN), Assigned Computer Name
+* Built-in duplicate detection by serial number
+* Automatic status polling (Complete / Queued / Failed)
 
 ### 🔹 Upload Result Engine
 After upload, a structured results window shows:
-- ✅ Success
-- ⏳ Queued
-- ⚠ Duplicate (Skipped)
-- ❌ Failed
+
+| Status | Meaning |
+|---|---|
+| ✅ Success | Imported into Autopilot |
+| ⏳ Queued | Import pending in Intune |
+| ⚠ Duplicate (Skipped) | Serial already registered |
+| ❌ Failed | Import error — retry available |
 
 With summary counts: `Total | Success | Failed | Duplicate | Queued`
 
 ### 🔹 Retry Engine
-- Automatically tracks failed rows
-- "Retry Failed Uploads" re-submits only failed records
-- Prevents reprocessing successful entries
+* Automatically tracks failed rows
+* **"Retry Failed Uploads"** re-submits only failed records — successful entries are never reprocessed
 
 ### 🔹 Message Center
-Real-time log console with levels: INFO, SUCCESS, WARN, ERROR
+Real-time log console with levels: INFO, SUCCESS, WARN, ERROR. Logs also written to:
 
-Logs are also written to:
-```
+```text
 C:\AutopilotAssistant\Logs\app_YYYYMMDD.log
 ```
 
 ---
 
-## ⚙️ Requirements
+# 🚀 Usage
 
-### System
-- Windows 10 / 11
-- Windows PowerShell 5.1
-- Run as **Administrator** (required for HWID collection)
+### Launch
 
-### Modules
-
-Required:
-
-```powershell
-Microsoft.Graph.Authentication
-MSAL.PS
-```
-
-Install (recommended once per system):
-
-```powershell
-Install-Module Microsoft.Graph.Authentication -Scope AllUsers -Force
-Install-Module MSAL.PS -Scope AllUsers -Force
-```
-
----
-
-## 🔐 Microsoft Graph Permissions (Delegated)
-
-The tool requests:
-- `User.Read`
-- `Device.Read.All`
-- `DeviceManagementServiceConfig.ReadWrite.All`
-
-User must have sufficient Intune permissions.
-
----
-
-## 🚀 How to Run
-
-### Option 1 — PowerShell Script
+**Option 1 — PowerShell script:**
 
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force
 .\Autopilot Assistant.ps1
 ```
 
-### Option 2 — Packaged EXE (Self-Signed with PSWrap)
+**Option 2 — Packaged EXE (self-signed with PSWrap):**
 
-The `.exe` was compiled and self-signed using [PSWrap](https://github.com/mabdulkadr/PSWrap) — a PowerShell Script to EXE Compiler with built-in code signing support.
-
-```
+```text
 Autopilot Assistant.exe
 ```
 
-No PowerShell console required.
+The `.exe` was compiled and self-signed using [PSWrap](https://github.com/mabdulkadr/PSWrap) — no PowerShell console required.
 
----
+### Typical Workflow
 
-## 🔄 Typical Workflow
-
-1. Launch tool as Administrator
-2. Review device information
+1. Launch the tool **as Administrator**
+2. Review the device information panel
 3. Click **Connect** (Microsoft Graph)
-4. Choose upload method:
-   - Provide CSV
-   - Or leave path empty to auto-create
+4. Choose the upload method — provide a CSV, or leave the path empty to auto-create one
 5. Click **Upload Device to Autopilot**
-6. Review results window
+6. Review the results window; retry any failures
 
----
-
-## 📂 Supported Input Formats
-
-### CSV
+### Supported Input Formats
 
 ```csv
 Device Serial Number,Windows Product ID,Hardware Hash
@@ -168,76 +126,91 @@ Device Serial Number,Windows Product ID,Hardware Hash
 
 ---
 
-## 📊 Operational Safeguards
+# ⚙️ Requirements
 
-- Pre-check: Admin rights validation
-- Pre-check: Internet connectivity
-- Pre-check: Graph module presence
-- Pre-check: Serial duplication in Autopilot
-- Polling logic for import status
-- Proxy-aware Graph connectivity
-- In-memory token caching (session only)
+| Requirement | Details |
+|-------------|---------|
+| **OS** | Windows 10 / 11 |
+| **PowerShell** | Windows PowerShell 5.1 |
+| **Elevation** | Run as **Administrator** (required for HWID collection) |
+| **Modules** | `Microsoft.Graph.Authentication` + `MSAL.PS` (auto-checked) |
+| **Graph permissions** | Delegated: `User.Read`, `Device.Read.All`, `DeviceManagementServiceConfig.ReadWrite.All` |
 
----
+Install the modules once per system:
 
-## 📁 Folder Structure
-
+```powershell
+Install-Module Microsoft.Graph.Authentication -Scope AllUsers -Force
+Install-Module MSAL.PS -Scope AllUsers -Force
 ```
+
+The signing-in user must have sufficient Intune permissions.
+
+### Data & Logs
+
+```text
 C:\AutopilotAssistant\
- ├── HWID\
- ├── Logs\
+├── HWID\        # exported Autopilot CSV files
+└── Logs\        # daily application logs
 ```
 
-No data stored outside this root path.
+No data is stored outside this root path.
 
 ---
 
-## 🐛 Troubleshooting
+# 🔍 Troubleshooting
 
 | Symptom | Likely Cause | Fix |
 |---------|--------------|-----|
 | HWID collection fails | Not running as Administrator | Right-click → Run as Administrator |
 | Graph connect fails | No internet or proxy blocking | Check network/proxy settings |
-| Module not found error | MSAL.PS or Graph module missing | Run `Install-Module` commands from Requirements |
-| Upload shows "Duplicate" | Serial already exists in Autopilot | Use "Retry Failed" or check existing devices |
-| UI freezes during upload | Rare; check background jobs | Restart the tool |
+| Module not found error | MSAL.PS or Graph module missing | Run the `Install-Module` commands above |
+| Upload shows "Duplicate" | Serial already exists in Autopilot | Check existing devices, or use Retry Failed |
+| UI freezes during upload | Rare; background job issue | Restart the tool |
 
 ---
 
-## 🛡 Design Principles
+# 🛡 Operational Notes
 
-- PowerShell 5.1 compatible
-- STA RunspacePool (no UI freeze)
-- DispatcherTimer async model
-- No device-code authentication
-- Delegated Graph authentication
-- Clean WPF card-style interface
-
----
-
-## 📜 License
-
-This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+* **Built-in pre-checks** — admin rights, internet connectivity, Graph module presence, and serial-duplicate detection run before every upload
+* **Least-privilege auth** — delegated Graph scopes only; no device-code flows, no app-only secrets to manage
+* **Token safety** — in-memory token caching, session only; nothing auth-related is persisted to disk
+* **Proxy-aware** — Graph connectivity respects system proxy configuration
+* **Async by design** — STA RunspacePool + DispatcherTimer keep the UI responsive during uploads
+* **Test in staging** — validate Group Tag / Assigned User values against a pilot device before fleet onboarding
 
 ---
 
 ## 👤 Author
 
-**Mohammad Abdulkader Omar** 
-Website: https://momar.tech 
-LinkedIn: https://www.linkedin.com/in/mabdulkadr/ 
-Version: **2.0** 
+**Mohammad Abdulkader Omar**  
+GitHub: [@mabdulkadr](https://github.com/mabdulkadr)  
+Website: [momar.tech](https://momar.tech)  
 
 ---
 
-## ☕ Support
+## 📜 License
 
-If this project helps you, consider supporting it:
-
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-☕-FFDD00?style=for-the-badge)](https://www.buymeacoffee.com/mabdulkadrx)
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
 ## ⚠ Disclaimer
 
-These scripts are provided as-is. Test them in a staging environment before applying them to production. The author is not responsible for any unintended outcomes resulting from their use.
+This skill and every script it generates are provided as-is with no warranty
+of any kind. Test generated tools in a staging environment before deploying to
+production. The authors assume no liability for any damage or data loss
+resulting from their use.
+
+---
+
+<div align="center">
+
+⭐ **If this tool saves you time, star the repo — it helps others find it.**
+
+[Report an Issue](../../issues) · [momar.tech](https://momar.tech)
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/mabdulkadrx)
+
+Built with [**PowerShell Enterprise Admin**](https://github.com/mabdulkadr/powershell-enterprise-admin-skill)
+
+</div>
