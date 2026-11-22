@@ -1,4 +1,4 @@
-<#!
+<#
 .SYNOPSIS
     Autopilot Assistant GUI for HWID collection and Intune Autopilot import.
 

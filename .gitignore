@@ -1,0 +1,15 @@
+# Generated runtime files
+logs/
+*.log
+events.json
+last_scan.json
+
+# Signing material (never commit private keys)
+*.pfx
+*.snk
+
+# Build output
+bin/
+obj/
+dist/
+.vs/
