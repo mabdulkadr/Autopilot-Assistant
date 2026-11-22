@@ -4,16 +4,16 @@
 
 **Windows Autopilot onboarding, simplified**
 
-Collect hardware hashes, import devices into Intune Autopilot, and monitor every upload — from one clean WPF interface.
+Collect hardware hashes, import devices into Intune Autopilot, and check upload results in one WPF window.
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![PowerShell](https://img.shields.io/badge/powershell-5.1%2B-blue.svg)
-![Platform](https://img.shields.io/badge/Windows-10%2F11-blue.svg)
-![UI](https://img.shields.io/badge/UI-WPF%20GUI-blue.svg)
-![Intune](https://img.shields.io/badge/Intune-Autopilot-0078D4.svg)
-![Version](https://img.shields.io/badge/version-2.0-green.svg)
+[![Mode](https://img.shields.io/badge/Mode-CLI-334155?style=for-the-badge)](#-usage)
+[![PowerShell](https://img.shields.io/badge/PowerShell-5.1%2B-5391FE?style=for-the-badge&logo=powershell&logoColor=white)](https://learn.microsoft.com/en-us/powershell/)
+[![Platform](https://img.shields.io/badge/Platform-Windows%2010%2F11-0F172A?style=for-the-badge)](#%EF%B8%8F-requirements)
+[![UI](https://img.shields.io/badge/UI-WPF%20Tailwind%20Slate-3B82F6?style=for-the-badge&logo=windows&logoColor=white)](#%EF%B8%8F-usage)
+[![License](https://img.shields.io/badge/License-MIT-F59E0B?style=for-the-badge)](#-license)
+[![Version](https://img.shields.io/badge/Version-2.0-334155?style=for-the-badge)](#-overview)
 
-[Features](#-core-features) • [Usage](#-usage) • [Requirements](#️-requirements) • [Troubleshooting](#-troubleshooting)
+[Overview](#-overview) • [Features](#-core-features) • [Usage](#-usage) • [Requirements](#%EF%B8%8F-requirements) • [Troubleshooting](#-troubleshooting) • [License](#-license)
 
 </div>
 
@@ -21,22 +21,21 @@ Collect hardware hashes, import devices into Intune Autopilot, and monitor every
 
 # 📖 Overview
 
-**Autopilot Assistant** is a modern WPF-based PowerShell tool designed to simplify **Windows Autopilot onboarding** and device provisioning workflows. It provides a structured, production-ready interface for:
+Autopilot Assistant is a WPF tool for Windows Autopilot onboarding. It lets you:
 
-* Collecting the **Hardware Hash (HWID)**
-* Connecting securely to **Microsoft Graph** (interactive delegated auth)
-* Importing devices into **Intune Autopilot**
-* Preventing duplicate uploads automatically
-* Monitoring upload status with structured results
-* Logging all operations locally
+* Collect the hardware hash (HWID) from a device
+* Connect to Microsoft Graph with interactive delegated sign-in
+* Import devices into Intune Autopilot
+* Skip uploads when a serial number is already registered
+* Check import status and keep a local log of each run
 
 ---
 
 ## 🖼️ Screenshots
 
-![Autopilot Assistant main window — device information panel, upload methods, and Message Center](Screenshot.png)
+![Autopilot Assistant main window with the device information panel, upload methods, and Message Center](Screenshot.png)
 
-*Main window: live device information panel, the two collection/upload methods, and the real-time Message Center.*
+*Main window with the device information panel, the two upload methods, and the Message Center.*
 
 ---
 
@@ -46,11 +45,11 @@ Collect hardware hashes, import devices into Intune Autopilot, and monitor every
 * Device model, name, manufacturer, serial number
 * Free storage (GB) and TPM version
 * Internet connectivity status
-* Session details (machine / user / elevation)
+* Session details: machine, user, and elevation
 
 ### 🔹 Method 1 — Collect HWID (No Upload)
-* Exports a compliant Autopilot CSV
-* Does **not** require a Graph connection — ideal for offline preparation
+* Exports a CSV in the format Autopilot expects
+* Works without a Graph connection, so you can prepare the CSV offline
 
 ```csv
 Device Serial Number,Windows Product ID,Hardware Hash
@@ -58,33 +57,45 @@ Device Serial Number,Windows Product ID,Hardware Hash
 ```
 
 ### 🔹 Method 2 — Upload to Intune Autopilot
-* Connect to Microsoft Graph (browser interactive)
-* Upload from CSV, JSON, or auto-generate a single-device CSV
-* Optional: Group Tag, Assigned User (UPN), Assigned Computer Name
-* Built-in duplicate detection by serial number
-* Automatic status polling (Complete / Queued / Failed)
+* Sign in to Microsoft Graph in a browser window
+* Upload from CSV or JSON, or create a single-device CSV in the tool
+* Optional Group Tag, Assigned User (UPN), and Assigned Computer Name
+* Checks for duplicate serial numbers before uploading
+* Polls Intune for the import result
 
 ### 🔹 Upload Result Engine
-After upload, a structured results window shows:
+After the upload, a results window shows one of these states per device:
 
 | Status | Meaning |
 |---|---|
 | ✅ Success | Imported into Autopilot |
 | ⏳ Queued | Import pending in Intune |
 | ⚠ Duplicate (Skipped) | Serial already registered |
-| ❌ Failed | Import error — retry available |
+| ❌ Failed | Import error; you can retry |
 
-With summary counts: `Total | Success | Failed | Duplicate | Queued`
+The window also shows totals for all devices, successes, failures, duplicates, and queued imports.
 
 ### 🔹 Retry Engine
-* Automatically tracks failed rows
-* **"Retry Failed Uploads"** re-submits only failed records — successful entries are never reprocessed
+The tool keeps track of failed rows. "Retry Failed Uploads" submits only those rows and leaves successful ones alone.
 
 ### 🔹 Message Center
-Real-time log console with levels: INFO, SUCCESS, WARN, ERROR. Logs also written to:
+A live log console with INFO, SUCCESS, WARN, and ERROR levels. The same messages go to:
 
 ```text
 C:\AutopilotAssistant\Logs\app_YYYYMMDD.log
+```
+
+---
+
+# 📂 Project Structure
+
+```text
+Autopilot-Assistant/
+│
+├── Autopilot Assistant.ps1      # WPF application source
+├── Autopilot Assistant.exe      # Packaged executable
+├── Screenshot.png               # Documentation screenshot
+└── README.md
 ```
 
 ---
@@ -106,16 +117,16 @@ Set-ExecutionPolicy Bypass -Scope Process -Force
 Autopilot Assistant.exe
 ```
 
-The `.exe` was compiled and self-signed using [PSWrap](https://github.com/mabdulkadr/PSWrap) — no PowerShell console required.
+The EXE was compiled and self-signed with [PSWrap](https://github.com/mabdulkadr/PSWrap), so it runs without a PowerShell console.
 
 ### Typical Workflow
 
-1. Launch the tool **as Administrator**
+1. Launch the tool as Administrator
 2. Review the device information panel
-3. Click **Connect** (Microsoft Graph)
-4. Choose the upload method — provide a CSV, or leave the path empty to auto-create one
+3. Click **Connect** to sign in to Microsoft Graph
+4. Choose the upload method. Provide a CSV path, or leave it empty to create one
 5. Click **Upload Device to Autopilot**
-6. Review the results window; retry any failures
+6. Review the results and retry any failures
 
 ### Supported Input Formats
 
@@ -132,7 +143,7 @@ Device Serial Number,Windows Product ID,Hardware Hash
 |-------------|---------|
 | **OS** | Windows 10 / 11 |
 | **PowerShell** | Windows PowerShell 5.1 |
-| **Elevation** | Run as **Administrator** (required for HWID collection) |
+| **Elevation** | Run as Administrator; required for HWID collection |
 | **Modules** | `Microsoft.Graph.Authentication` + `MSAL.PS` (auto-checked) |
 | **Graph permissions** | Delegated: `User.Read`, `Device.Read.All`, `DeviceManagementServiceConfig.ReadWrite.All` |
 
@@ -143,7 +154,7 @@ Install-Module Microsoft.Graph.Authentication -Scope AllUsers -Force
 Install-Module MSAL.PS -Scope AllUsers -Force
 ```
 
-The signing-in user must have sufficient Intune permissions.
+The user who signs in needs enough Intune permission to import devices.
 
 ### Data & Logs
 
@@ -153,7 +164,7 @@ C:\AutopilotAssistant\
 └── Logs\        # daily application logs
 ```
 
-No data is stored outside this root path.
+The tool writes no data outside this folder.
 
 ---
 
@@ -161,8 +172,8 @@ No data is stored outside this root path.
 
 | Symptom | Likely Cause | Fix |
 |---------|--------------|-----|
-| HWID collection fails | Not running as Administrator | Right-click → Run as Administrator |
-| Graph connect fails | No internet or proxy blocking | Check network/proxy settings |
+| HWID collection fails | Not running as Administrator | Right-click and choose Run as Administrator |
+| Graph connect fails | No internet or a proxy is blocking access | Check network and proxy settings |
 | Module not found error | MSAL.PS or Graph module missing | Run the `Install-Module` commands above |
 | Upload shows "Duplicate" | Serial already exists in Autopilot | Check existing devices, or use Retry Failed |
 | UI freezes during upload | Rare; background job issue | Restart the tool |
@@ -171,20 +182,20 @@ No data is stored outside this root path.
 
 # 🛡 Operational Notes
 
-* **Built-in pre-checks** — admin rights, internet connectivity, Graph module presence, and serial-duplicate detection run before every upload
-* **Least-privilege auth** — delegated Graph scopes only; no device-code flows, no app-only secrets to manage
-* **Token safety** — in-memory token caching, session only; nothing auth-related is persisted to disk
-* **Proxy-aware** — Graph connectivity respects system proxy configuration
-* **Async by design** — STA RunspacePool + DispatcherTimer keep the UI responsive during uploads
-* **Test in staging** — validate Group Tag / Assigned User values against a pilot device before fleet onboarding
+* Before each upload, the tool checks admin rights, internet access, the Graph modules, and duplicate serial numbers
+* Sign-in uses delegated Graph scopes only. There is no device-code flow and no app-only secret to manage
+* Tokens stay in memory for the session; nothing auth-related is written to disk
+* Graph requests follow the system proxy configuration
+* Uploads run in an STA runspace pool with a dispatcher timer, so the window stays responsive
+* Test Group Tag and Assigned User values on a pilot device before onboarding a full fleet
 
 ---
 
 ## 👤 Author
 
-**Mohammad Abdulkader Omar**  
+**Mohammad Abdelkader Omar**  
 GitHub: [@mabdulkadr](https://github.com/mabdulkadr)  
-Website: [momar.tech](https://momar.tech)  
+Website: [momar.tech](https://momar.tech)
 
 ---
 
@@ -202,7 +213,6 @@ production. The authors assume no liability for any damage or data loss
 resulting from their use.
 
 ---
-
 <div align="center">
 
 ⭐ **If this tool saves you time, star the repo — it helps others find it.**
