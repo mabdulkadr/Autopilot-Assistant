@@ -212,6 +212,11 @@ of any kind. Test generated tools in a staging environment before deploying to
 production. The authors assume no liability for any damage or data loss
 resulting from their use.
 
+## Running the GUI and building an EXE
+
+This repository ships source scripts only. Run `Run-GUI.bat` from File Explorer, or start the `.ps1` file from an elevated PowerShell session. If you need a standalone executable, convert the script with [PSWrap](https://github.com/mabdulkadr/PSWrap) and re-sign the result on your own machine. Prebuilt EXEs are no longer committed.
+
+---
 ---
 <div align="center">
 
@@ -221,6 +226,6 @@ resulting from their use.
 
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/mabdulkadrx)
 
-Built with [**PowerShell Enterprise Admin**](https://github.com/mabdulkadr/powershell-enterprise-admin-skill)
+Built with [**PowerShell Enterprise Admin**](https://github.com/mabdulkadr/powershell-enterprise-admin)
 
 </div>
